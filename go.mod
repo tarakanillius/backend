@@ -8,8 +8,6 @@ require (
 )
 
 require (
-	github.com/gorilla/handlers v1.5.2 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
-	github.com/openai/openai-go v0.0.0-20240801004606-fb2df0fe2200 // indirect
+	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.25.0 // indirect
 )

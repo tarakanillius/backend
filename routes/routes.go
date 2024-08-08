@@ -9,11 +9,11 @@ import (
 func SetupRoutes() *chi.Mux {
 	r := chi.NewRouter()
 
-	r.Post("/image/analyze", handlers.AnalyzeImageHandler)
+	r.Post("/analyze", handlers.AnalyzeImageHandler)
 	r.Get("/product/{id}", handlers.GetProductByID)
-	r.Get("/search", handlers.SearchProducts)
-	r.Post("/generate-receipt", handlers.GenerateReceiptHandler)
-	r.Post("/generate-recommendations", handlers.GenerateRecommendationsHandler)
+	r.Get("/search", handlers.GetProductByKeywords)
+	r.Post("/receipt", handlers.GenerateReceiptHandler)
+	r.Post("/recommendations", handlers.GenerateRecommendationsHandler)
 
 	return r
 }
