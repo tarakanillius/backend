@@ -1,3 +1,4 @@
+//searchProductById.go
 package handlers
 
 import (
@@ -6,8 +7,8 @@ import (
 	"fmt"
 	"github.com/go-chi/chi/v5"
 	"go.mongodb.org/mongo-driver/bson"
-	"my-app/models"
-	"my-app/utils"
+	"my-app/internal/models"
+	"my-app/internal/utils"
 	"net/http"
 	"strconv"
 )

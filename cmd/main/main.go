@@ -1,9 +1,10 @@
+// main.go
 package main
 
 import (
 	"log"
+	"my-app/internal/utils"
 	"my-app/routes"
-	"my-app/utils"
 	"net/http"
 )
 

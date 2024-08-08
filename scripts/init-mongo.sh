@@ -1,3 +1,4 @@
+//init-mongo.sh
 #!/bin/bash
 set -e
 

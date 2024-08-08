@@ -1,3 +1,4 @@
+//analyzingImage.go
 package handlers
 
 import (
@@ -5,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"my-app/utils"
+	"my-app/internal/utils"
   "encoding/json" 
 )
 

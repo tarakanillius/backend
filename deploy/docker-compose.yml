@@ -12,7 +12,9 @@ services:
       - backend-network
 
   backend:
-    build: .
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
     container_name: backend
     ports:
       - "8080:8080"
@@ -20,8 +22,6 @@ services:
       - mongo
     networks:
       - backend-network
-    volumes:
-      - ./images:/app/images
     environment:
       MONGODB_URI: "mongodb://mongo:27017"
       MONGODB_NAME: "off"  # Set the correct database name

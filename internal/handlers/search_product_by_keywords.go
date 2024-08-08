@@ -1,3 +1,4 @@
+//searchProductByKeywords.go
 package handlers
 
 import (
@@ -6,8 +7,8 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"my-app/models"
-	"my-app/utils"
+	"my-app/internal/models"
+	"my-app/internal/utils"
 	"net/http"
 	"strconv"
 	"strings"

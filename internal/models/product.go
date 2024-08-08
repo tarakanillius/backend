@@ -1,3 +1,4 @@
+//product.go
 package models
 
 // Nutriments struct to parse the nutriments data

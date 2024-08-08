@@ -1,8 +1,9 @@
+//routes.go
 package routes
 
 import (
 	"github.com/go-chi/chi/v5"
-	"my-app/handlers"
+	"my-app/internal/handlers"
 )
 
 // SetupRoutes sets up the routes for the application

@@ -1,9 +1,10 @@
+//askRecipe.go
 package handlers
 
 import (
     "encoding/json"
     "net/http"
-    "my-app/utils"
+    "my-app/internal/utils"
 )
 
 // GenerateReceiptHandler handles the receipt generation request.
