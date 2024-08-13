@@ -6,7 +6,6 @@ import (
 	"my-app/internal/handlers"
 )
 
-// SetupRoutes sets up the routes for the application
 func SetupRoutes() *chi.Mux {
 	r := chi.NewRouter()
 

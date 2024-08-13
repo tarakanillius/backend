@@ -1,9 +1,8 @@
-//computeImageUrl.go
+//compute_image_url.go
 package utils
 
 import "fmt"
 
-// ComputeImageURL generates a URL for the product image based on its ID.
 func ComputeImageURL(barcode string) string {
     var url string
     if len(barcode) <= 8 {

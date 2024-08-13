@@ -1,4 +1,4 @@
-//askRecipe.go
+//ask_recipe.go
 package handlers
 
 import (
@@ -7,7 +7,6 @@ import (
     "my-app/internal/utils"
 )
 
-// GenerateReceiptHandler handles the receipt generation request.
 func GenerateReceiptHandler(w http.ResponseWriter, r *http.Request) {
     var requestData struct {
         Products []string `json:"products"`

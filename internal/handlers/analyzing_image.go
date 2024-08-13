@@ -1,4 +1,4 @@
-//analyzingImage.go
+//analyzing_image.go
 package handlers
 
 import (
@@ -10,7 +10,6 @@ import (
   "encoding/json" 
 )
 
-// AnalyzeImageHandler handles the image analysis request.
 func AnalyzeImageHandler(w http.ResponseWriter, r *http.Request) {
 	// Limit the size of the file to avoid large uploads
 	const maxFileSize = 10 * 1024 * 1024 // 10 MB

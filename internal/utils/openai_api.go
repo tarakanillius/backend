@@ -1,4 +1,4 @@
-//openAiAPI.go
+// openai_api.go
 package utils
 
 import (
@@ -14,14 +14,12 @@ import (
 )
 
 func init() {
-	// Load the environment variables from the .env file
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error loading .env file")
 	}
 }
 
-// sendOpenAIRequest sends a request to the OpenAI API and returns the response body.
 func sendOpenAIRequest(requestBody []byte) (map[string]interface{}, error) {
 	openaiAPIKey := os.Getenv("OPENAI_API_KEY")
 	if openaiAPIKey == "" {
@@ -82,7 +80,6 @@ func GenerateReceipt(products []string) (string, error) {
 		return "", fmt.Errorf("failed to generate receipt: %v", err)
 	}
 
-	// Extract recipe from response
 	choices, ok := result["choices"].([]interface{})
 	if !ok || len(choices) == 0 {
 		return "", fmt.Errorf("unexpected response format")
@@ -102,7 +99,6 @@ func GenerateReceipt(products []string) (string, error) {
 	return content, nil
 }
 
-// AnalyzeImage sends an image to OpenAI API and returns key terms.
 func AnalyzeImage(imageData []byte) (string, error) {
 	imageBase64 := base64.StdEncoding.EncodeToString(imageData)
 
@@ -137,7 +133,6 @@ func AnalyzeImage(imageData []byte) (string, error) {
 		return "", fmt.Errorf("failed to analyze image: %v", err)
 	}
 
-	// Extract keywords from response
 	choices, ok := result["choices"].([]interface{})
 	if !ok || len(choices) == 0 {
 		return "", fmt.Errorf("unexpected response format")
@@ -157,7 +152,6 @@ func AnalyzeImage(imageData []byte) (string, error) {
 	return content, nil
 }
 
-// GenerateRecommendations provides recommendations for additional ingredients.
 func GenerateRecommendations(products []string) (string, error) {
 	prompt := fmt.Sprintf("Given the following products: %v, suggest additional ingredients that could be added to make a meal.", products)
 
@@ -184,7 +178,6 @@ func GenerateRecommendations(products []string) (string, error) {
 		return "", fmt.Errorf("failed to generate recommendations: %v", err)
 	}
 
-	// Extract recommendations from response
 	choices, ok := result["choices"].([]interface{})
 	if !ok || len(choices) == 0 {
 		return "", fmt.Errorf("unexpected response format")

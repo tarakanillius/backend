@@ -1,4 +1,4 @@
-//askRecommendations.go
+//ask_recommendations.go
 package handlers
 
 import (
@@ -8,7 +8,6 @@ import (
 )
 
 
-// GenerateRecommendationsHandler handles the recommendations request.
 func GenerateRecommendationsHandler(w http.ResponseWriter, r *http.Request) {
     var requestData struct {
         Products []string `json:"products"`

@@ -1,7 +1,6 @@
-//product.go
+// product.go
 package models
 
-// Nutriments struct to parse the nutriments data
 type Nutriments struct {
 	EnergyKcal           float64 `bson:"energy-kcal" json:"energy_kcal"`
 	EnergyKcal100g       float64 `bson:"energy-kcal_100g" json:"energy_kcal_100g"`
@@ -37,7 +36,6 @@ type Nutriments struct {
 	NutritionScoreFR100g int     `bson:"nutrition-score-fr_100g" json:"nutrition_score_fr_100g"`
 }
 
-// Product struct to parse the product data
 type Product struct {
 	ID             string            `bson:"_id" json:"id"`
 	ProductName    string            `bson:"product_name" json:"product_name"`
@@ -48,5 +46,5 @@ type Product struct {
 	Nutriments     Nutriments        `bson:"nutriments" json:"nutriments"`
 	MaxImgID       string            `bson:"max_imgid,omitempty" json:"max_imgid,omitempty"`
 	ImageURL       string            `bson:"imageUrl,omitempty" json:"imageUrl,omitempty"`
-  Keywords       []string           `bson:"_keywords" json:"Keywords"`
+	Keywords       []string          `bson:"_keywords" json:"Keywords"`
 }

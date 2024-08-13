@@ -1,4 +1,4 @@
-//searchProductById.go
+//search_product_by_id.go
 package handlers
 
 import (
@@ -33,7 +33,7 @@ func GetProductByID(w http.ResponseWriter, r *http.Request) {
     if maximg > 0 {
         product.ImageURL = utils.ComputeImageURL(productID)
     } else {
-        product.ImageURL = "" // No image URL if `max_imgid` is not present or <= 0
+        product.ImageURL = "" 
     }
 
     w.Header().Set("Content-Type", "application/json")
