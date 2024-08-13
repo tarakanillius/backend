@@ -18,23 +18,35 @@ func ConnectDB() error {
 		return fmt.Errorf("error loading .env file: %v", err)
 	}
 
-	// Get MongoDB URI and Database Name from environment variables
+	// Get MongoDB details from environment variables
 	mongoURI := os.Getenv("MONGODB_URI")
-	if mongoURI == "" {
-		return fmt.Errorf("MONGODB_URI environment variable is not set")
+	mongoUser := os.Getenv("MONGODB_LOGIN")
+	mongoPassword := os.Getenv("MONGODB_PASSWORD")
+	mongoDatabase := os.Getenv("MONGODB_DATABASE")
+
+	if mongoURI == "" || mongoUser == "" || mongoPassword == "" || mongoDatabase == "" {
+		return fmt.Errorf("MongoDB environment variables are not set correctly")
 	}
 
-	clientOptions := options.Client().ApplyURI(mongoURI)
+	// Setup client options with Auth
+	clientOptions := options.Client().ApplyURI(mongoURI).SetAuth(options.Credential{
+		Username: mongoUser,
+		Password: mongoPassword,
+	})
+
+	// Connect to MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
 		return fmt.Errorf("failed to connect to MongoDB: %v", err)
 	}
 
+	// Ping MongoDB to test connection
 	if err := client.Ping(context.Background(), nil); err != nil {
 		return fmt.Errorf("failed to ping MongoDB: %v", err)
 	}
 
-	db = client.Database(os.Getenv("MONGODB_DATABASE_NAME"))
+	// Set the database
+	db = client.Database(mongoDatabase)
 	return nil
 }
 

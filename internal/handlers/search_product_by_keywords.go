@@ -39,7 +39,7 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	filter := bson.M{"_keywords": bson.M{"$all": keywords}}
 	findOptions := options.Find().SetLimit(4)
 
-	cur, err := db.Collection(os.Getenv("MONGODB_COLLECTION_NAME")).Find(context.TODO(), filter, findOptions)
+	cur, err := db.Collection(os.Getenv("MONGODB_COLLECTION")).Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to search products: %v", err), http.StatusInternalServerError)
 		return
