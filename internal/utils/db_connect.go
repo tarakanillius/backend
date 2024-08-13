@@ -34,7 +34,7 @@ func ConnectDB() error {
 		return fmt.Errorf("failed to ping MongoDB: %v", err)
 	}
 
-	db = client.Database(os.Getenv("MONGODB_NAME"))
+	db = client.Database(os.Getenv("MONGODB_DATABASE_NAME"))
 	return nil
 }
 

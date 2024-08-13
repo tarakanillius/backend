@@ -5,14 +5,24 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"my-app/internal/models"
 	"my-app/internal/utils"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
+
+	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+}
 
 func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	keywordStr := r.URL.Query().Get("keywords")
@@ -29,7 +39,7 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	filter := bson.M{"_keywords": bson.M{"$all": keywords}}
 	findOptions := options.Find().SetLimit(4)
 
-	cur, err := db.Collection("products").Find(context.TODO(), filter, findOptions)
+	cur, err := db.Collection(os.Getenv("MONGODB_COLLECTION_NAME")).Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to search products: %v", err), http.StatusInternalServerError)
 		return

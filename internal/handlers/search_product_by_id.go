@@ -11,7 +11,16 @@ import (
 	"my-app/internal/utils"
 	"net/http"
 	"strconv"
+	"github.com/joho/godotenv"
+  "os"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env file")
+	}
+}
 
 func GetProductByID(w http.ResponseWriter, r *http.Request) {
     productID := chi.URLParam(r, "id")
@@ -23,7 +32,7 @@ func GetProductByID(w http.ResponseWriter, r *http.Request) {
     db := utils.GetDB()
 
     var product models.Product
-    err := db.Collection("products").FindOne(context.TODO(), bson.M{"_id": productID}).Decode(&product)
+    err := db.Collection(os.Getenv("MONGODB_COLLECTION_NAME")).FindOne(context.TODO(), bson.M{"_id": productID}).Decode(&product)
     if err != nil {
         http.Error(w, fmt.Sprintf("Product not found: %v", err), http.StatusNotFound)
         return
