@@ -1,29 +1,20 @@
-// search_product_by_keywords.go
 package handlers
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"my-app/internal/models"
 	"my-app/internal/utils"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
-
-	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func init() {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env file")
-	}
-}
-
+// GetProductByKeywords handles requests to search for products by keywords.
 func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	keywordStr := r.URL.Query().Get("keywords")
 	if keywordStr == "" {
@@ -54,6 +45,23 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Check if the product already has a nutrition score and grade
+		if product.NutritionScore == 0 && product.NutriScoreGrade == "unknown" {
+			// Calculate Nutrition Score
+			nutritionScore, nutriScoreGrade := utils.CalculateNutritionScore(
+				product.Nutriments.EnergyKj100g,
+				product.Nutriments.Sugars100g,
+				product.Nutriments.SaturatedFat100g,
+				product.Nutriments.Salt100g,
+				product.Nutriments.Carbohydrates100g,
+				product.Nutriments.Fiber100g,
+				product.Nutriments.Proteins100g,
+			)
+			product.NutritionScore = nutritionScore
+			product.NutriScoreGrade = nutriScoreGrade
+		}
+
+		// Set image URL
 		maximg, _ := strconv.Atoi(product.MaxImgID)
 		if maximg > 0 {
 			product.ImageURL = utils.ComputeImageURL(product.ID)

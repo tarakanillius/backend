@@ -1,18 +1,24 @@
-//analyzing_image.go
 package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"my-app/internal/utils"
-  "encoding/json" 
+	"net/http"
 )
 
 func AnalyzeImageHandler(w http.ResponseWriter, r *http.Request) {
 	// Limit the size of the file to avoid large uploads
 	const maxFileSize = 10 * 1024 * 1024 // 10 MB
+
+	// Retrieve the userID from the form data
+	userID := r.FormValue("userID")
+	if userID == "" {
+		http.Error(w, "Missing userID in request", http.StatusBadRequest)
+		return
+	}
 
 	// Read the file from the request body
 	file, _, err := r.FormFile("image")
@@ -41,9 +47,13 @@ func AnalyzeImageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Respond with the extracted keywords
+	// Respond with the extracted keywords and userID
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(map[string]string{"keywords": keywords}); err != nil {
+	response := map[string]string{
+		"keywords": keywords,
+		"userID":   userID,
+	}
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to encode response: %v", err), http.StatusInternalServerError)
 	}
 }

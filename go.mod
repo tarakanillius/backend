@@ -7,7 +7,4 @@ require (
 	go.mongodb.org/mongo-driver v1.16.0
 )
 
-require (
-	github.com/joho/godotenv v1.5.1
-	golang.org/x/crypto v0.25.0 // indirect
-)
+require github.com/joho/godotenv v1.5.1

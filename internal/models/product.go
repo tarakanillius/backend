@@ -1,6 +1,7 @@
 // product.go
 package models
 
+
 type Nutriments struct {
 	EnergyKcal           float64 `bson:"energy-kcal" json:"energy_kcal"`
 	EnergyKcal100g       float64 `bson:"energy-kcal_100g" json:"energy_kcal_100g"`
@@ -32,19 +33,18 @@ type Nutriments struct {
 	Salt100g             float64 `bson:"salt_100g" json:"salt_100g"`
 	SaltUnit             string  `bson:"salt_unit" json:"salt_unit"`
 	NovaGroup            int     `bson:"nova-group" json:"nova_group"`
-	NutritionScoreFR     int     `bson:"nutrition-score-fr" json:"nutrition_score_fr"`
-	NutritionScoreFR100g int     `bson:"nutrition-score-fr_100g" json:"nutrition_score_fr_100g"`
 }
 
 type Product struct {
 	ID             string            `bson:"_id" json:"id"`
 	ProductName    string            `bson:"product_name" json:"product_name"`
 	Labels         string            `bson:"labels" json:"labels"`
-	NutriscoreTags []string          `bson:"nutriscore_tags" json:"nutriscore_tags"`
 	NutrientLevels map[string]string `bson:"nutrient_levels" json:"nutrient_levels"`
 	AdditivesTags  []string          `bson:"additives_tags" json:"additives_tags"`
 	Nutriments     Nutriments        `bson:"nutriments" json:"nutriments"`
 	MaxImgID       string            `bson:"max_imgid,omitempty" json:"max_imgid,omitempty"`
 	ImageURL       string            `bson:"imageUrl,omitempty" json:"imageUrl,omitempty"`
 	Keywords       []string          `bson:"_keywords" json:"Keywords"`
+	NutritionScore int               `bson:"nutriscore_score" json:"nutriscore_score"`
+	NutriScoreGrade string           `bson:"nutriscore_grade" json:"nutriscore_grade"`
 }

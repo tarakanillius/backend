@@ -57,7 +57,7 @@ func GenerateReceipt(products []string) (string, error) {
 	prompt := fmt.Sprintf("Provide a recipe using the following ingredients: %v", products)
 
 	requestBody, err := json.Marshal(map[string]interface{}{
-		"model": "gpt-4-turbo",
+		"model": "gpt-4o-mini",
 		"messages": []map[string]interface{}{
 			{
 				"role": "user",
@@ -104,7 +104,7 @@ func AnalyzeImage(imageData []byte) (string, error) {
 	prompt := "Describe one product in the image and choose the most suitable keywords for this product, for further searching in the openfoodfacts database. Keywords should be in lower case and without spaces, e.g., migros, protein, drink, oh. Use the language that is written on the product. IN RESPONSE BODY SHOULD BE ONLY 4 KEYWORDS"
 
 	requestBody, err := json.Marshal(map[string]interface{}{
-		"model": "gpt-4-turbo",
+		"model": "gpt-4o-mini",
 		"messages": []map[string]interface{}{
 			{
 				"role": "user",
@@ -155,7 +155,7 @@ func GenerateRecommendations(products []string) (string, error) {
 	prompt := fmt.Sprintf("Given the following products: %v, suggest additional ingredients that could be added to make a meal.", products)
 
 	requestBody, err := json.Marshal(map[string]interface{}{
-		"model": "gpt-4-turbo",
+		"model": "gpt-4o-mini",
 		"messages": []map[string]interface{}{
 			{
 				"role": "user",
