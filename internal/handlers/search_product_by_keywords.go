@@ -10,11 +10,11 @@ import (
 	"my-app/internal/utils"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
 
-// GetProductByKeywords handles requests to search for products by keywords.
 func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	keywordStr := r.URL.Query().Get("keywords")
 	if keywordStr == "" {
@@ -26,10 +26,16 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 		return c == ','
 	})
 
-	db := utils.GetDB()
-	filter := bson.M{"_keywords": bson.M{"$all": keywords}}
-	findOptions := options.Find().SetLimit(4)
+	if len(keywords) == 0 {
+		http.Error(w, "No valid keywords provided", http.StatusBadRequest)
+		return
+	}
 
+	db := utils.GetDB()
+	filter := bson.M{"_keywords": bson.M{"$in": keywords}}
+
+	// Find matching products
+	findOptions := options.Find().SetLimit(4) // Adjust limit as needed
 	cur, err := db.Collection(os.Getenv("MONGODB_COLLECTION")).Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to search products: %v", err), http.StatusInternalServerError)
@@ -37,7 +43,8 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	}
 	defer cur.Close(context.TODO())
 
-	var products []models.Product
+	// Create a map to store product matches and their scores
+	productScores := make(map[string]int)
 	for cur.Next(context.TODO()) {
 		var product models.Product
 		if err := cur.Decode(&product); err != nil {
@@ -45,6 +52,43 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Calculate the match score
+		score := 0
+		for _, keyword := range keywords {
+			for _, productKeyword := range product.Keywords {
+				if strings.Contains(strings.ToLower(productKeyword), strings.ToLower(keyword)) {
+					score++
+					break
+				}
+			}
+		}
+		productScores[product.ID] = score
+	}
+
+	if err := cur.Err(); err != nil {
+		http.Error(w, fmt.Sprintf("Cursor error: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	// Sort products by their score
+	var sortedProducts []models.Product
+	for id, score := range productScores {
+		var product models.Product
+		err := db.Collection(os.Getenv("MONGODB_COLLECTION")).FindOne(context.TODO(), bson.M{"_id": id}).Decode(&product)
+		if err != nil {
+			continue
+		}
+		product.NutritionScore = score // Adding the score to the product
+		sortedProducts = append(sortedProducts, product)
+	}
+
+	// Sort products by their score in descending order
+	sort.Slice(sortedProducts, func(i, j int) bool {
+		return sortedProducts[i].NutritionScore > sortedProducts[j].NutritionScore
+	})
+
+	// Update image URLs and calculate nutrition scores
+	for i, product := range sortedProducts {
 		// Check if the product already has a nutrition score and grade
 		if product.NutritionScore == 0 && product.NutriScoreGrade == "unknown" {
 			// Calculate Nutrition Score
@@ -57,28 +101,21 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 				product.Nutriments.Fiber100g,
 				product.Nutriments.Proteins100g,
 			)
-			product.NutritionScore = nutritionScore
-			product.NutriScoreGrade = nutriScoreGrade
+			sortedProducts[i].NutritionScore = nutritionScore
+			sortedProducts[i].NutriScoreGrade = nutriScoreGrade
 		}
 
 		// Set image URL
 		maximg, _ := strconv.Atoi(product.MaxImgID)
 		if maximg > 0 {
-			product.ImageURL = utils.ComputeImageURL(product.ID)
+			sortedProducts[i].ImageURL = utils.ComputeImageURL(product.ID)
 		} else {
-			product.ImageURL = ""
+			sortedProducts[i].ImageURL = ""
 		}
-
-		products = append(products, product)
-	}
-
-	if err := cur.Err(); err != nil {
-		http.Error(w, fmt.Sprintf("Cursor error: %v", err), http.StatusInternalServerError)
-		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(products); err != nil {
+	if err := json.NewEncoder(w).Encode(sortedProducts); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to encode products: %v", err), http.StatusInternalServerError)
 	}
 }
