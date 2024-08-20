@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+  // Initialize Firebase
+  utils.InitFirebase()
+
 	// Connect to the database
 	if err := utils.ConnectDB(); err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)

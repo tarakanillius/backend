@@ -7,4 +7,8 @@ require (
 	go.mongodb.org/mongo-driver v1.16.0
 )
 
-require github.com/joho/godotenv v1.5.1
+require (
+	firebase.google.com/go/v4 v4.14.1
+	github.com/joho/godotenv v1.5.1
+	google.golang.org/api v0.192.0
+)
