@@ -29,23 +29,28 @@ func GetProductByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if the product already has a nutrition score and grade
-	if product.NutritionScore == 0 && product.NutriScoreGrade == "unknown" {
-		// Calculate Nutrition Score
-		nutritionScore, nutriScoreGrade := utils.CalculateNutritionScore(
-			product.Nutriments.EnergyKj100g,
-			product.Nutriments.Sugars100g,
-			product.Nutriments.SaturatedFat100g,
-			product.Nutriments.Salt100g,
-			product.Nutriments.Carbohydrates100g,
-			product.Nutriments.Fiber100g,
-			product.Nutriments.Proteins100g,
-		)
-		product.NutritionScore = nutritionScore
-		product.NutriScoreGrade = nutriScoreGrade
-	}
+	if product.NutritionScore > 0 || product.NutritionGrade == "unknown" {
+		// Convert map[string]interface{} to map[string]float64
+		nutriData := make(map[string]float64)
+		for k, v := range product.Nutriscore["2021"].Data {
+			if val, ok := v.(float64); ok {
+				nutriData[k] = val
+			} else if val, ok := v.(int); ok {
+				nutriData[k] = float64(val)
+			}
+		}
 
-	// Set image URL
+		productType := utils.DetermineProductType(product.Nutriscore["2021"].Data)
+
+		var score int
+		switch productType {
+		case "beverage":
+			score = utils.CalculateBeverageScore(nutriData)
+		default:
+			score = utils.CalculateGeneralFoodScore(nutriData)
+		}
+		product.NutritionScore = score
+	}
 	maximg, _ := strconv.Atoi(product.MaxImgID)
 	if maximg > 0 {
 		product.ImageURL = utils.ComputeImageURL(productID)

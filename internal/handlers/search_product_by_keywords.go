@@ -34,8 +34,7 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	db := utils.GetDB()
 	filter := bson.M{"_keywords": bson.M{"$in": keywords}}
 
-	// Find matching products
-	findOptions := options.Find().SetLimit(4) // Adjust limit as needed
+	findOptions := options.Find().SetLimit(4)
 	cur, err := db.Collection(os.Getenv("MONGODB_COLLECTION")).Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Failed to search products: %v", err), http.StatusInternalServerError)
@@ -43,7 +42,6 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 	}
 	defer cur.Close(context.TODO())
 
-	// Create a map to store product matches and their scores
 	productScores := make(map[string]int)
 	for cur.Next(context.TODO()) {
 		var product models.Product
@@ -52,7 +50,6 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Calculate the match score
 		score := 0
 		for _, keyword := range keywords {
 			for _, productKeyword := range product.Keywords {
@@ -70,42 +67,44 @@ func GetProductByKeywords(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Sort products by their score
 	var sortedProducts []models.Product
-	for id, score := range productScores {
+	for id := range productScores {
 		var product models.Product
 		err := db.Collection(os.Getenv("MONGODB_COLLECTION")).FindOne(context.TODO(), bson.M{"_id": id}).Decode(&product)
 		if err != nil {
 			continue
 		}
-		product.NutritionScore = score // Adding the score to the product
+
+		if product.NutritionGrade == "unknown" || product.NutritionScore < 0 {
+			// Convert map[string]interface{} to map[string]float64
+			nutriData := make(map[string]float64)
+			for k, v := range product.Nutriscore["2021"].Data {
+				if val, ok := v.(float64); ok {
+					nutriData[k] = val
+				}
+			}
+
+			productType := utils.DetermineProductType(product.Nutriscore["2021"].Data)
+
+			var score int
+
+			switch productType {
+			case "beverage":
+				score = utils.CalculateBeverageScore(nutriData)
+			default:
+				score = utils.CalculateGeneralFoodScore(nutriData)
+			}
+			// Assign the score and grade back to the product
+			product.NutritionScore = score
+		}
 		sortedProducts = append(sortedProducts, product)
 	}
 
-	// Sort products by their score in descending order
 	sort.Slice(sortedProducts, func(i, j int) bool {
 		return sortedProducts[i].NutritionScore > sortedProducts[j].NutritionScore
 	})
 
-	// Update image URLs and calculate nutrition scores
 	for i, product := range sortedProducts {
-		// Check if the product already has a nutrition score and grade
-		if product.NutritionScore == 0 && product.NutriScoreGrade == "unknown" {
-			// Calculate Nutrition Score
-			nutritionScore, nutriScoreGrade := utils.CalculateNutritionScore(
-				product.Nutriments.EnergyKj100g,
-				product.Nutriments.Sugars100g,
-				product.Nutriments.SaturatedFat100g,
-				product.Nutriments.Salt100g,
-				product.Nutriments.Carbohydrates100g,
-				product.Nutriments.Fiber100g,
-				product.Nutriments.Proteins100g,
-			)
-			sortedProducts[i].NutritionScore = nutritionScore
-			sortedProducts[i].NutriScoreGrade = nutriScoreGrade
-		}
-
-		// Set image URL
 		maximg, _ := strconv.Atoi(product.MaxImgID)
 		if maximg > 0 {
 			sortedProducts[i].ImageURL = utils.ComputeImageURL(product.ID)

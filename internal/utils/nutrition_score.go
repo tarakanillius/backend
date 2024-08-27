@@ -1,191 +1,214 @@
 package utils
 
-func CalculateNutritionScore(energy, sugar, saturates, sodium, fvl, fibre, protein float64) (int, string) {
-	// Energy Points Calculation
-	var energyPoints int
+// Calculate the Nutri-Score for beverages
+func CalculateBeverageScore(data map[string]float64) int {
+	energy := data["energy"]
+	sugars := data["sugars"]
+	saturatedFat := data["saturated_fat"]
+	sodium := data["sodium"]
+	fruitsVegetablesNuts := data["fruits_vegetables_nuts_colza_walnut_olive_oils"]
+	fiber := data["fiber"]
+
+	energyPoints := calculateEnergyPoints(energy)
+	sugarPoints := calculateSugarPoints(sugars)
+	saturatedFatPoints := calculateSaturatedFatPoints(saturatedFat)
+	sodiumPoints := calculateSodiumPoints(sodium)
+	fvlPoints := calculateFruitsVegetablesLegumesPoints(fruitsVegetablesNuts)
+	fiberPoints := calculateFiberPoints(fiber)
+	proteinPoints := calculateProteinPoints(data["proteins"])
+
+	totalPointsA := energyPoints + sugarPoints + saturatedFatPoints + sodiumPoints
+	totalPointsC := fvlPoints + fiberPoints + proteinPoints
+
+	return calculateScore(totalPointsA, totalPointsC)
+}
+
+// Calculate the Nutri-Score for general foods
+func CalculateGeneralFoodScore(data map[string]float64) int {
+	energy := data["energy"]
+	sugars := data["sugars"]
+	saturatedFat := data["saturated_fat"]
+	sodium := data["sodium"]
+	fvl := data["fruits_vegetables_nuts_colza_walnut_olive_oils"]
+	fiber := data["fiber"]
+	protein := data["proteins"]
+
+	energyPoints := calculateEnergyPoints(energy)
+	sugarPoints := calculateSugarPoints(sugars)
+	saturatedFatPoints := calculateSaturatedFatPoints(saturatedFat)
+	sodiumPoints := calculateSodiumPoints(sodium)
+	fvlPoints := calculateFruitsVegetablesLegumesPoints(fvl)
+	fiberPoints := calculateFiberPoints(fiber)
+	proteinPoints := calculateProteinPoints(protein)
+
+	totalPointsA := energyPoints + sugarPoints + saturatedFatPoints + sodiumPoints
+	totalPointsC := fvlPoints + fiberPoints + proteinPoints
+
+	return calculateScore(totalPointsA, totalPointsC)
+}
+
+func calculateEnergyPoints(energy float64) int {
 	switch {
 	case energy <= 335:
-		energyPoints = 0
+		return 0
 	case energy <= 670:
-		energyPoints = 1
+		return 1
 	case energy <= 1005:
-		energyPoints = 2
+		return 2
 	case energy <= 1340:
-		energyPoints = 3
+		return 3
 	case energy <= 1675:
-		energyPoints = 4
+		return 4
 	case energy <= 2010:
-		energyPoints = 5
+		return 5
 	case energy <= 2345:
-		energyPoints = 6
+		return 6
 	case energy <= 2680:
-		energyPoints = 7
+		return 7
 	case energy <= 3015:
-		energyPoints = 8
+		return 8
 	case energy <= 3350:
-		energyPoints = 9
+		return 9
 	default:
-		energyPoints = 10
+		return 10
 	}
+}
 
-	// Sugar Points Calculation
-	var sugarPoints int
+func calculateSugarPoints(sugar float64) int {
 	switch {
 	case sugar <= 4.5:
-		sugarPoints = 0
+		return 0
 	case sugar <= 9:
-		sugarPoints = 1
+		return 1
 	case sugar <= 13.5:
-		sugarPoints = 2
+		return 2
 	case sugar <= 18:
-		sugarPoints = 3
+		return 3
 	case sugar <= 22.5:
-		sugarPoints = 4
+		return 4
 	case sugar <= 27:
-		sugarPoints = 5
+		return 5
 	case sugar <= 31:
-		sugarPoints = 6
+		return 6
 	case sugar <= 36:
-		sugarPoints = 7
+		return 7
 	case sugar <= 40:
-		sugarPoints = 8
+		return 8
 	case sugar <= 45:
-		sugarPoints = 9
+		return 9
 	default:
-		sugarPoints = 10
+		return 10
 	}
+}
 
-	// Saturated Fatty Acids (SFA) Points Calculation
-	var sfaPoints int
+func calculateSaturatedFatPoints(saturatedFat float64) int {
 	switch {
-	case saturates <= 1:
-		sfaPoints = 0
-	case saturates <= 2:
-		sfaPoints = 1
-	case saturates <= 3:
-		sfaPoints = 2
-	case saturates <= 4:
-		sfaPoints = 3
-	case saturates <= 5:
-		sfaPoints = 4
-	case saturates <= 6:
-		sfaPoints = 5
-	case saturates <= 7:
-		sfaPoints = 6
-	case saturates <= 8:
-		sfaPoints = 7
-	case saturates <= 9:
-		sfaPoints = 8
-	case saturates <= 10:
-		sfaPoints = 9
+	case saturatedFat <= 1:
+		return 0
+	case saturatedFat <= 2:
+		return 1
+	case saturatedFat <= 3:
+		return 2
+	case saturatedFat <= 4:
+		return 3
+	case saturatedFat <= 5:
+		return 4
+	case saturatedFat <= 6:
+		return 5
+	case saturatedFat <= 7:
+		return 6
+	case saturatedFat <= 8:
+		return 7
+	case saturatedFat <= 9:
+		return 8
+	case saturatedFat <= 10:
+		return 9
 	default:
-		sfaPoints = 10
+		return 10
 	}
+}
 
-	// Sodium Points Calculation
-	var sodiumPoints int
+func calculateSodiumPoints(sodium float64) int {
+	sodiumMg := sodium * 1000 // Convert sodium to mg
 	switch {
-	case sodium <= 90:
-		sodiumPoints = 0
-	case sodium <= 180:
-		sodiumPoints = 1
-	case sodium <= 270:
-		sodiumPoints = 2
-	case sodium <= 360:
-		sodiumPoints = 3
-	case sodium <= 450:
-		sodiumPoints = 4
-	case sodium <= 540:
-		sodiumPoints = 5
-	case sodium <= 630:
-		sodiumPoints = 6
-	case sodium <= 720:
-		sodiumPoints = 7
-	case sodium <= 810:
-		sodiumPoints = 8
-	case sodium <= 900:
-		sodiumPoints = 9
+	case sodiumMg <= 90:
+		return 0
+	case sodiumMg <= 180:
+		return 1
+	case sodiumMg <= 270:
+		return 2
+	case sodiumMg <= 360:
+		return 3
+	case sodiumMg <= 450:
+		return 4
+	case sodiumMg <= 540:
+		return 5
+	case sodiumMg <= 630:
+		return 6
+	case sodiumMg <= 720:
+		return 7
+	case sodiumMg <= 810:
+		return 8
+	case sodiumMg <= 900:
+		return 9
 	default:
-		sodiumPoints = 10
+		return 10
 	}
+}
 
-	// FVL Points Calculation
-	var fvlPoints int
+func calculateFruitsVegetablesLegumesPoints(fvl float64) int {
 	switch {
 	case fvl <= 40:
-		fvlPoints = 0
+		return 0
 	case fvl <= 60:
-		fvlPoints = 1
+		return 2
 	case fvl <= 80:
-		fvlPoints = 2
+		return 4
 	default:
-		fvlPoints = 5
+		return 10
 	}
+}
 
-	// Fibre Points Calculation
-	var fibrePoints int
+func calculateFiberPoints(fiber float64) int {
 	switch {
-	case fibre <= 0.9:
-		fibrePoints = 0
-	case fibre <= 1.9:
-		fibrePoints = 1
-	case fibre <= 2.8:
-		fibrePoints = 2
-	case fibre <= 3.7:
-		fibrePoints = 3
-	case fibre <= 4.7:
-		fibrePoints = 4
+	case fiber <= 0.9:
+		return 0
+	case fiber <= 1.9:
+		return 1
+	case fiber <= 2.8:
+		return 2
+	case fiber <= 3.7:
+		return 3
+	case fiber <= 4.7:
+		return 4
 	default:
-		fibrePoints = 5
+		return 5
 	}
+}
 
-	// Protein Points Calculation
-	var proteinPoints int
+func calculateProteinPoints(protein float64) int {
 	switch {
 	case protein <= 1.6:
-		proteinPoints = 0
+		return 0
 	case protein <= 3.2:
-		proteinPoints = 1
+		return 1
 	case protein <= 4.8:
-		proteinPoints = 2
+		return 2
 	case protein <= 6.4:
-		proteinPoints = 3
+		return 3
 	case protein <= 8:
-		proteinPoints = 4
+		return 4
 	default:
-		proteinPoints = 5
+		return 5
 	}
+}
 
-	// Calculate Points A and Points C
-	pointsA := energyPoints + sugarPoints + sfaPoints + sodiumPoints
-	pointsC := fvlPoints + fibrePoints + proteinPoints
-
-	// Calculate Nutrition Score (based on the provided formula)
-	var nutritionScore int
-	switch {
-	case pointsA >= 0 && pointsA < 11:
-		nutritionScore = pointsA - pointsC
-	case pointsA >= 11 && fvlPoints == 5:
-		nutritionScore = pointsA - pointsC
-	default:
-		nutritionScore = pointsA - fvlPoints - proteinPoints
+func calculateScore(pointsA, pointsC int) int {
+	if pointsA >= 0 && pointsA < 11 {
+		return pointsA
 	}
-
-	// Determine Nutri-Score grade
-	var nutriScoreGrade string
-	switch {
-	case nutritionScore < 0:
-		nutriScoreGrade = "a"
-	case nutritionScore < 3:
-		nutriScoreGrade = "b"
-	case nutritionScore < 11:
-		nutriScoreGrade = "c"
-	case nutritionScore < 19:
-		nutriScoreGrade = "d"
-	default:
-		nutriScoreGrade = "e"
+	if pointsA >= 11 && pointsC == 10 {
+		return pointsA - pointsC
 	}
-
-
-	return nutritionScore, nutriScoreGrade
+	return pointsA - pointsC
 }

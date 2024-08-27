@@ -58,15 +58,21 @@ type Nutriments struct {
 }
 
 type Product struct {
-	ID              string            `bson:"_id" json:"id"`
-	ProductName     string            `bson:"product_name" json:"product_name"`
-	Labels          string            `bson:"labels" json:"labels"`
-	NutrientLevels  map[string]string `bson:"nutrient_levels" json:"nutrient_levels"`
-	AdditivesTags   []string          `bson:"additives_tags" json:"additives_tags"`
-	Nutriments      Nutriments        `bson:"nutriments" json:"nutriments"`
-	MaxImgID        string            `bson:"max_imgid,omitempty" json:"max_imgid,omitempty"`
-	ImageURL        string            `bson:"imageUrl,omitempty" json:"imageUrl,omitempty"`
-	Keywords        []string          `bson:"_keywords" json:"Keywords"`
-	NutritionScore  int               `bson:"nutriscore_score" json:"nutriscore_score"`
-	NutriScoreGrade string            `bson:"nutriscore_grade" json:"nutriscore_grade"`
+	ID                                string                    `bson:"_id" json:"id"`
+	ProductName                       string                    `bson:"product_name" json:"product_name"`
+	Labels                            string                    `bson:"labels" json:"labels"`
+	NutritionScore                    int                       `bson:"nutriscore_score" json:"nutriscore_score"`
+	NutritionGrade                    string                    `bson:"nutriscore_grade" json:"nutriscore_grade"`
+	Nutriscore                        map[string]NutriscoreData `bson:"nutriscore" json:"nutriscore"`
+	NutrientLevels                    map[string]string         `bson:"nutrient_levels" json:"nutrient_levels"`
+	AdditivesTags                     []string                  `bson:"additives_tags" json:"additives_tags"`
+	Nutriments                        Nutriments                `bson:"nutriments" json:"nutriments"`
+	MaxImgID                          string                    `bson:"max_imgid,omitempty" json:"max_imgid,omitempty"`
+	ImageURL                          string                    `bson:"imageUrl,omitempty" json:"imageUrl,omitempty"`
+	Keywords                          []string                  `bson:"_keywords" json:"Keywords"`
+	IngredientsNonNutritiveSweeteners int                       `bson:"ingredients_non_nutritive_sweeteners_n" json:"ingredients_non_nutritive_sweeteners_n"`
+}
+
+type NutriscoreData struct {
+	Data map[string]interface{} `json:"data" bson:"data"`
 }
