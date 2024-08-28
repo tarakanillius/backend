@@ -30,8 +30,6 @@ func GetProductByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if product.NutritionGrade == "unknown" {
-		fmt.Printf("Product data: %+v\n", product) // Debug print
-
 		// Convert map[string]interface{} to map[string]float64
 		nutriData := make(map[string]float64)
 		for k, v := range product.Nutriscore["2023"].Data {
@@ -60,8 +58,6 @@ func GetProductByID(w http.ResponseWriter, r *http.Request) {
 				fmt.Printf("Unexpected type for key %s: %T\n", k, v)
 			}
 		}
-
-		fmt.Printf("NutriData: %+v\n", nutriData) // Debug print
 
 		// Determine product type based on both 2021 and 2023 data
 		productType := utils.DetermineProductType(product.Nutriscore["2021"].Data, product.Nutriscore["2023"].Data)
