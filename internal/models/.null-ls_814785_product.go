@@ -78,7 +78,7 @@ type Product struct {
 	ID                                string                    `bson:"_id" json:"id"`
 	ProductName                       string                    `bson:"product_name" json:"product_name"`
 	Labels                            string                    `bson:"labels" json:"labels"`
-	NutritionScore                    int                       `bson:"nutriscore_score" json:"nutriscore_score"`
+	NutritionScore                    float64                   `bson:"nutriscore_score" json:"nutriscore_score"`
 	NutritionGrade                    string                    `bson:"nutriscore_grade" json:"nutriscore_grade"`
 	Nutriscore                        map[string]NutriscoreData `bson:"nutriscore" json:"nutriscore"`
 	NutrientLevels                    map[string]string         `bson:"nutrient_levels" json:"nutrient_levels"`
@@ -91,5 +91,26 @@ type Product struct {
 }
 
 type NutriscoreData struct {
-	Data map[string]interface{} `json:"data" bson:"data"`
+	Energy             float64 `json:"energy" bson:"energy"`
+	EnergyPoints       float64 `json:"energy_points" bson:"energy_points"`
+	EnergyValue        float64 `json:"energy_value" bson:"energy_value"`
+	Fiber              float64 `json:"fiber" bson:"fiber"`
+	FiberPoints        float64 `json:"fiber_points" bson:"fiber_points"`
+	FiberValue         float64 `json:"fiber_value" bson:"fiber_value"`
+	Grade              string  `json:"grade" bson:"grade"`
+	NegativePoints     float64 `json:"negative_points" bson:"negative_points"`
+	PositivePoints     float64 `json:"positive_points" bson:"positive_points"`
+	Proteins           float64 `json:"proteins" bson:"proteins"`
+	ProteinsPoints     float64 `json:"proteins_points" bson:"proteins_points"`
+	ProteinsValue      float64 `json:"proteins_value" bson:"proteins_value"`
+	SaturatedFat       float64 `json:"saturated_fat" bson:"saturated_fat"`
+	SaturatedFatPoints float64 `json:"saturated_fat_points" bson:"saturated_fat_points"`
+	SaturatedFatValue  float64 `json:"saturated_fat_value" bson:"saturated_fat_value"`
+	Score              float64 `json:"score" bson:"score"`
+	Sodium             float64 `json:"sodium" bson:"sodium"`
+	SodiumPoints       float64 `json:"sodium_points" bson:"sodium_points"`
+	SodiumValue        float64 `json:"sodium_value" bson:"sodium_value"`
+	Sugars             float64 `json:"sugars" bson:"sugars"`
+	SugarsPoints       float64 `json:"sugars_points" bson:"sugars_points"`
+	SugarsValue        float64 `json:"sugars_value" bson:"sugars_value"`
 }
